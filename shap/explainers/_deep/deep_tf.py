@@ -139,6 +139,7 @@ class TFDeep(Explainer):
             self.learning_phase_flags = [op.outputs[0] for op in self.learning_phase_ops]
         else:
             self.learning_phase_ops = [t.op for t in learning_phase_flags]
+            self.learning_phase_flags = [op.outputs[0] for op in self.learning_phase_ops]
 
         # save the expected output of the model
         # if self.data is a function, set self.expected_value to None
@@ -225,6 +226,8 @@ class TFDeep(Explainer):
 
             if not tf.executing_eagerly():
                 def anon():
+                    print('Shape of output in Anon', self.model_output.shape)
+                    self.model_output.set_shape((None, 3))
                     out = self.model_output[:,i] if self.multi_output else self.model_output
                     return tf.gradients(out, self.model_inputs)
 
